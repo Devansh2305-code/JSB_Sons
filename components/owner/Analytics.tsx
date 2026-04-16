@@ -15,6 +15,12 @@ interface Props { token: string; }
 
 const PIE_COLORS = ['#f59e0b', '#3b82f6', '#8b5cf6', '#0ea5e9', '#22c55e', '#ef4444'];
 
+const formatCurrencyValue = (value: unknown): string => {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const amount = typeof raw === 'number' ? raw : Number(raw ?? 0);
+  return `₹${amount.toLocaleString('en-IN')}`;
+};
+
 export default function Analytics({ token }: Props) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,10 +103,10 @@ export default function Analytics({ token }: Props) {
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="date" stroke="#444" tick={{ fill: '#888', fontSize: 11 }} tickLine={false} />
-                  <YAxis stroke="#444" tick={{ fill: '#888', fontSize: 11 }} tickLine={false} tickFormatter={v => `₹${v}`} />
+                  <YAxis stroke="#444" tick={{ fill: '#888', fontSize: 11 }} tickLine={false} tickFormatter={(v: number | string) => `₹${v}`} />
                   <Tooltip
                     contentStyle={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '10px', color: '#f0f0f0' }}
-                    formatter={(v: number) => [`₹${v.toLocaleString('en-IN')}`, 'Revenue']}
+                    formatter={(v) => [formatCurrencyValue(v), 'Revenue']}
                   />
                   <Area type="monotone" dataKey="revenue" stroke="#c8a96e" strokeWidth={2} fill="url(#colorRev)" />
                 </AreaChart>
@@ -132,11 +138,11 @@ export default function Analytics({ token }: Props) {
               <p style={{ fontWeight: '700', marginBottom: '1rem', fontSize: '0.95rem' }}>🏆 Top Products by Revenue</p>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={data.topProducts} layout="vertical">
-                  <XAxis type="number" stroke="#444" tick={{ fill: '#888', fontSize: 11 }} tickFormatter={v => `₹${v}`} />
+                  <XAxis type="number" stroke="#444" tick={{ fill: '#888', fontSize: 11 }} tickFormatter={(v: number | string) => `₹${v}`} />
                   <YAxis type="category" dataKey="name" width={120} stroke="#444" tick={{ fill: '#ccc', fontSize: 11 }} />
                   <Tooltip
                     contentStyle={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '10px', color: '#f0f0f0' }}
-                    formatter={(v: number) => [`₹${v.toLocaleString('en-IN')}`, 'Revenue']}
+                    formatter={(v) => [formatCurrencyValue(v), 'Revenue']}
                   />
                   <Bar dataKey="revenue" fill="#c8a96e" radius={[0, 6, 6, 0]} />
                 </BarChart>
