@@ -21,7 +21,7 @@ const UserSchema = new Schema<IUser>({
   address: { type: String, default: '' },
 }, { timestamps: true });
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (this: any, next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
